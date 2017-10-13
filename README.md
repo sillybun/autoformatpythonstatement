@@ -22,4 +22,6 @@ Use your plugin manager of choice.
 
 ## Setting
 
+put `autocmd FileType python let g:autoformatpython_enabled = 1` in your vimrc.
 
+Everytime you type enter, the previous line will be formatted automatically.
