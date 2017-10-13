@@ -13,7 +13,22 @@ python3 << endOfPython
 
 import autopep8
 
-vim.current.line = autopep8.fix_code(vim.current.line)
+line = vim.current.line
+
+space = ''
+
+for char in line:
+	print(char)
+	if char == ' ' or char == '	':
+		space = space + char
+	else:
+		break
+
+extra = line[len(space):]
+if extra != '':
+	extra = autopep8.fix_code(extra)
+
+vim.current.line = space + extra
 
 endOfPython
 endfunction
