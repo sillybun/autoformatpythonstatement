@@ -14,7 +14,7 @@ python3 << endOfPython
 import autopep8
 
 line = vim.current.line
-
+row, col = vim.current.window.cursor
 space = ''
 
 for char in line:
@@ -25,10 +25,16 @@ for char in line:
 		break
 
 extra = line[len(space):]
-if extra != '':
-	extra = autopep8.fix_code(extra)
+if extra == '':
+	pass
+else:
+	oldextralen = len(extra)
+	if extra != '':
+		extra = autopep8.fix_code(extra)[:-1]
+	expandlen = len(extra) - oldextralen
 
-vim.current.line = space + extra
+	vim.current.line = space + extra
+	vim.current.window.cursor = (row, col + expandlen)
 
 endOfPython
 endfunction
@@ -39,17 +45,20 @@ endfunction
 command! FormatCurrentLine call s:FormatCurrentLine()
 
 if g:autoformatpython_enabled == 1
-	autocmd FileType python inoremap <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
+	inoremap <silent> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
 endif
 
 function! s:ChangeFormatCurrentLineMode()
 	if g:autoformatpythonstate_mode == 1
-		iunmap <Cr>
+		try
+			iunmap <Cr>
+		catch
+		endtry
 		let g:autoformatpythonstate_mode = 0
 	else
-		inoremap <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
+		inoremap <silent> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
 		let g:autoformatpythonstate_mode = 1
 	endif
 endfunction
 
-autocmd FileType python command! ChangeFormatCurrentLineMode call s:ChangeFormatCurrentLineMode()
+command! ChangeFormatCurrentLineMode call s:ChangeFormatCurrentLineMode()
