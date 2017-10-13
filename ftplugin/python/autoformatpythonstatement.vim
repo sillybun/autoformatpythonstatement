@@ -37,3 +37,19 @@ endfunction
 "  Expose our commands to the user
 " --------------------------------
 command! FormatCurrentLine call s:FormatCurrentLine()
+
+if g:autoformatpython_enabled == 1
+	autocmd FileType python inoremap <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
+endif
+
+function! s:ChangeFormatCurrentLineMode()
+	if g:autoformatpythonstate_mode == 1
+		iunmap <Cr>
+		let g:autoformatpythonstate_mode = 0
+	else
+		inoremap <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
+		let g:autoformatpythonstate_mode = 1
+	endif
+endfunction
+
+autocmd FileType python command! ChangeFormatCurrentLineMode call s:ChangeFormatCurrentLineMode()
