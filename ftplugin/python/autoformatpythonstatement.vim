@@ -45,7 +45,7 @@ endfunction
 command! FormatCurrentLine call s:FormatCurrentLine()
 
 if g:autoformatpython_enabled == 1
-	execute "autocmd FileType python inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>"
+	execute "autocommand FileType python inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>"
 endif
 
 function! s:ChangeFormatCurrentLineMode()
@@ -56,7 +56,7 @@ function! s:ChangeFormatCurrentLineMode()
 		endtry
 		let g:autoformatpythonstate_mode = 0
 	else
-		execute "autocmd FileType python inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>"
+		execute "autocommand FileType python inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>"
 		let g:autoformatpythonstate_mode = 1
 	endif
 endfunction
