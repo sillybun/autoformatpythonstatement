@@ -42,7 +42,6 @@ endfunction
 " --------------------------------
 "  Expose our commands to the user
 " --------------------------------
-command! FormatCurrentLine call s:FormatCurrentLine()
 
 if g:autoformatpython_enabled == 1
 	inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
@@ -51,14 +50,17 @@ endif
 function! s:ChangeFormatCurrentLineMode()
 	if g:autoformatpythonstate_mode == 1
 		try
-			iunmap <Cr>
+			iunmap <buffer> <Cr>
 		catch
 		endtry
+		echom "Change Mode: Disable"
 		let g:autoformatpythonstate_mode = 0
 	else
+		echom "Change Mode: Enable"
 		inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
 		let g:autoformatpythonstate_mode = 1
 	endif
 endfunction
 
 command! ChangeFormatCurrentLineMode call s:ChangeFormatCurrentLineMode()
+command! FormatCurrentLine call s:FormatCurrentLine()
