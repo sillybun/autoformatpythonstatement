@@ -45,12 +45,14 @@ endfunction
 
 if g:autoformatpython_enabled == 1
 	inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
+	nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
 endif
 
 function! s:ChangeFormatCurrentLineMode()
 	if g:autoformatpythonstate_mode == 1
 		try
 			iunmap <buffer> <Cr>
+			nunmap <buffer> <Cr>
 		catch
 		endtry
 		echom "Change Mode: Disable"
@@ -58,6 +60,7 @@ function! s:ChangeFormatCurrentLineMode()
 	else
 		echom "Change Mode: Enable"
 		inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
+		nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
 		let g:autoformatpythonstate_mode = 1
 	endif
 endfunction
