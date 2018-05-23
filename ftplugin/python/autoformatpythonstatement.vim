@@ -44,8 +44,8 @@ endfunction
 " --------------------------------
 
 if g:autoformatpython_enabled == 1
-	inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
-	nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
+	inoremap <silent> <buffer> <expr> <Cr> (getline('.') != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
+	nnoremap <silent> <buffer> <expr> <cr> :FormatCurrentLine<cr><cr>
 endif
 
 function! s:ChangeFormatCurrentLineMode()
@@ -59,7 +59,7 @@ function! s:ChangeFormatCurrentLineMode()
 		let g:autoformatpythonstate_mode = 0
 	else
 		echom "Change Mode: Enable"
-		inoremap <silent> <buffer> <Cr> <Esc>:FormatCurrentLine<Cr>a<Cr>
+		inoremap <silent> <buffer> <expr> <Cr> (getline('.') != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
 		nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
 		let g:autoformatpythonstate_mode = 1
 	endif
