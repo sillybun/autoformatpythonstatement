@@ -31,10 +31,18 @@ else:
 	oldextralen = len(extra)
 	if extra != '':
 		extra = autopep8.fix_code(extra)[:-1]
-	expandlen = len(extra) - oldextralen
+		if '\n' in extra:
+			extras = extra.split('\n')
+			for i in range(len(extras)-1):
+				vim.current.buffer.append("", row)
+			for i, v in enumerate(extras):
+				vim.current.buffer[row + i - 1] = space + v
+			vim.current.window.cursor = (row + len(extras) - 1, len(space) + len(extras[-1]))
+		else:
+			expandlen = len(extra) - oldextralen
 
-	vim.current.line = space + extra
-	vim.current.window.cursor = (row, col + expandlen)
+			vim.current.line = space + extra
+			vim.current.window.cursor = (row, col + expandlen)
 
 endOfPython
 endfunction
