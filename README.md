@@ -4,6 +4,20 @@
 
 This is a plugin aimed to autoformat python statement. When you finish type a line and type \<Cr\> to start a new line, the previous line will be formatted automatically.
 
+## Details
+
+if you write python file like that:
+
+```
+a =1+2<cursor>
+```
+that looks ulgy, right? Don't worry. With the help of this plugin, you simply press return button in `insert mode` or `normal mode`, then the code will be formated automatically by autopep8 into this:
+
+```
+a = 1 + 2
+<cursor>
+```
+
 ## Installation
 
 Use your plugin manager of choice.
