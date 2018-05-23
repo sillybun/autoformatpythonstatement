@@ -45,7 +45,7 @@ endfunction
 
 if g:autoformatpython_enabled == 1
 	inoremap <silent> <buffer> <expr> <Cr> (getline('.') != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
-	nnoremap <silent> <buffer> <expr> <cr> :FormatCurrentLine<cr><cr>
+	nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
 endif
 
 function! s:ChangeFormatCurrentLineMode()
