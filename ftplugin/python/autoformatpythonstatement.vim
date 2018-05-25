@@ -12,13 +12,13 @@ function! s:FormatCurrentLine()
 python3 << endOfPython
 
 import autopep8
+import re
 
 line = vim.current.line
 row, col = vim.current.window.cursor
 space = ''
 
 for char in line:
-	print(char)
 	if char == ' ' or char == '	':
 		space = space + char
 	else:
@@ -29,7 +29,12 @@ if extra == '':
 	pass
 else:
 	oldextralen = len(extra)
-	if extra != '':
+	if extra == "##" and (row > 1 and (re.match("^\s*def ", vim.current.buffer[row-2]) or re.match("^\s*class ", vim.current.buffer[row-2]))):
+		vim.current.line = space + '"""'
+		vim.current.buffer.append("", row)
+		vim.current.buffer[row] = space + '"""'
+		vim.current.window.cursor = (row, len(space) + 3)
+	elif extra != '':
 		extra = autopep8.fix_code(extra)[:-1]
 		if '\n' in extra:
 			extras = extra.split('\n')
