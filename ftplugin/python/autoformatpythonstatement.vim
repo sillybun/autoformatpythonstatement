@@ -13,10 +13,15 @@ python3 << endOfPython
 
 import autopep8
 import re
+import astformat
 
 line = vim.current.line
 row, col = vim.current.window.cursor
 space = ''
+if len(line) > 79:
+	toolong = True
+else:
+	toolong = False
 
 for char in line:
 	if char == ' ' or char == '	':
@@ -35,7 +40,11 @@ else:
 		vim.current.buffer[row] = space + '"""'
 		vim.current.window.cursor = (row, len(space) + 3)
 	elif extra != '':
-		extra = autopep8.fix_code(extra)[:-1]
+		flag = False
+		if toolong:
+			extra, flag = astformat.formatif(extra)
+		if not flag:
+			extra = autopep8.fix_code(extra)[:-1]
 		if '\n' in extra:
 			extras = extra.split('\n')
 			for i in range(len(extras)-1):
