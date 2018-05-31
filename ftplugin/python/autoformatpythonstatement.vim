@@ -8,7 +8,7 @@ python3 sys.path.append(vim.eval('expand("<sfile>:h")'))
 " --------------------------------
 "  Function(s)
 " --------------------------------
-function! s:FormatCurrentLine()
+function! s:FormatCurrentLine() abort
 python3 << endOfPython
 
 import autopep8
