@@ -24,7 +24,7 @@ else:
 	toolong = False
 
 for char in line:
-	if char == ' ' or char == '	':
+	if char == ' ' or char == '\t':
 		space = space + char
 	else:
 		break
