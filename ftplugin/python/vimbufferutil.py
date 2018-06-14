@@ -86,8 +86,8 @@ def getcurrentindent(buffer, linenumber: int) -> Tuple[int, bool]:
     for row in range(start, linenumber):
         line = buffer[row].strip()
         col = 0
-        if __name__ == "__main__":
-            print(line, row)
+        # if __name__ == "__main__":
+        #     print(line, row)
         # if len(conditionstake) != 0 and row == linenumber - 1:
         #     break
         if row == toplinenumber - 1 and len(conditionstake) > 0:
@@ -262,7 +262,7 @@ def getcurrentindent(buffer, linenumber: int) -> Tuple[int, bool]:
                     break
                 elif line[col] == ";":
                     conditionstake = list()
-                if col == len(line) - 1:
+                elif col == len(line) - 1:
                     conditionstake.pop()
                 col += 1
             elif conditionstake[-1][0] == "func=":
@@ -330,8 +330,8 @@ def getcurrentindent(buffer, linenumber: int) -> Tuple[int, bool]:
                     col += 2
                 else:
                     col += 1
-        if __name__ == "__main__":
-            print(conditionstake)
+        # if __name__ == "__main__":
+        #     print(conditionstake)
     # print("Time consumed is:", time.time() - starttime)
     # print(toplinenumber, linenumber)
     if tempcs is None:
