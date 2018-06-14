@@ -5,6 +5,10 @@ python3 import sys
 python3 import vim
 python3 sys.path.append(vim.eval('expand("<sfile>:h")'))
 
+function! Strip(input_string) abort
+    return substitute(a:input_string, '^\s*\(.\{-}\)\s*$', '\1', '')
+endfunction
+
 " --------------------------------
 "  Function(s)
 " --------------------------------
@@ -23,13 +27,15 @@ if len(line) > 79:
 else:
 	toolong = False
 
-for char in line:
-	if char == ' ' or char == '\t':
-		space = space + char
-	else:
-		break
+    #for char in line:
+    #	if char == ' ' or char == '\t':
+    #		space = space + char
+    #	else:
+    #		break
 
-extra = line[len(space):]
+extra = line.lstrip()
+space = " " * (len(line) - len(extra))
+
 if extra == '':
 	pass
 else:
@@ -54,9 +60,63 @@ else:
 			vim.current.window.cursor = (row + len(extras) - 1, len(space) + len(extras[-1]))
 		else:
 			expandlen = len(extra) - oldextralen
-
 			vim.current.line = space + extra
 			vim.current.window.cursor = (row, col + expandlen)
+
+endOfPython
+endfunction
+
+function! s:FormatCurrentLineandIndent() abort
+python3 << endOfPython
+
+import time
+import vim
+import vimbufferutil
+
+line = vim.current.line
+row, col = vim.current.window.cursor
+
+if line.strip() == "":
+    vim.current.line = ""
+    if vim.eval("b:autoformat_lastlength") != "-1":
+        line = " " * int(vim.eval("b:autoformat_lastlength"))
+    vim.current.buffer.append(line, row)
+    vim.current.window.cursor = (row + 1, len(line))
+else:
+    vim.command("call s:FormatCurrentLine()")
+
+    extra = line.strip()
+
+    if extra == "":
+        vim.current.line = ""
+        vim.current.buffer.append(line, row)
+        vim.current.window.cursor = (row + 1, len(line))
+    else:
+        indentlevel, finishflag = vimbufferutil.getcurrentindent(vim.current.buffer, row)
+        if not finishflag:
+            nextindentlevel = indentlevel + 2
+        elif vim.current.line[-1] == ":":
+            nextindentlevel = indentlevel + 1
+        else:
+            nextindentlevel = indentlevel
+
+        vim.current.buffer.append(" " * (4 * (nextindentlevel)), row)
+        vim.current.window.cursor = (row + 1, 4 * (nextindentlevel))
+
+vim.command("let b:autoformat_lastlength = -1")
+
+
+endOfPython
+endfunction
+
+function! s:ExitInsertMode() abort
+python3 << endOfPython
+
+row, col = vim.current.window.cursor
+
+if vim.current.line.strip() == "":
+    vim.current.window.cursor = (row, 1)
+    vim.current.line = ""
 
 endOfPython
 endfunction
@@ -65,9 +125,25 @@ endfunction
 "  Expose our commands to the user
 " --------------------------------
 
+function! SaveCurrentLength() abort
+python3 << endOfPython
+import vim
+line = vim.current.line
+vim.command("let b:autoformat_lastlength = {}".format(len(line)))
+endOfPython
+return ''
+endfunction
+
 if g:autoformatpython_enabled == 1
-	inoremap <silent> <buffer> <expr> <Cr> (getline('.') != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
+	" inoremap <silent> <buffer> <expr> <Cr> (Strip(getline('.')) != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
+	" inoremap <silent> <expr> <buffer> <Cr> '<C-o>:FormatCurrentLineandIndent<Cr>'
+	inoremap <silent> <expr> <buffer> <Cr> SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>'
+    "inoremap <silent> <buffer> <expr> <Esc> '<Esc>:AFExitInsertMode<Cr>'
 	nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
+    augroup afpsgroup
+        autocmd!
+        autocmd! InsertLeave *.py call s:ExitInsertMode()
+    augroup END
 endif
 
 function! s:ChangeFormatCurrentLineMode()
@@ -77,15 +153,22 @@ function! s:ChangeFormatCurrentLineMode()
 			nunmap <buffer> <Cr>
 		catch
 		endtry
+        augroup afpsgroup
+            autocmd!
+        augroup END
 		echom "Change Mode: Disable"
 		let g:autoformatpythonstate_mode = 0
 	else
 		echom "Change Mode: Enable"
-		inoremap <silent> <buffer> <expr> <Cr> (getline('.') != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
+		inoremap <silent> <buffer> <expr> <Cr> (Strip(getline('.')) != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
 		nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
 		let g:autoformatpythonstate_mode = 1
 	endif
 endfunction
 
+let b:autoformat_lastlength = -1
+
 command! ChangeFormatCurrentLineMode call s:ChangeFormatCurrentLineMode()
 command! FormatCurrentLine call s:FormatCurrentLine()
+command! FormatCurrentLineandIndent call s:FormatCurrentLineandIndent()
+command! AFExitInsertMode call s:ExitInsertMode()
