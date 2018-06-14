@@ -61,23 +61,26 @@ class AddBufferContent:
 
 
 def getcurrentindent(buffer, linenumber: int) -> Tuple[int, bool]:
-    # start, peek = linenumber, linenumber
-    # while peek >= 0:
-    #     if buffer[peek] == "" or buffer[peek].strip() == "":
-    #         peek -= 1
-    #     elif buffer[peek].strip().startswith("def "):
-    #         start = peek
-    #     elif buffer[peek].strip().startswith("class "):
-    #         start = peek
-    #     elif buffer[peek].strip().startswith("while "):
-    #         start = peek
-    #     elif buffer[peek].strip().startswith("from "):
-    #         start = peek
-    #     elif buffer[peek].strip().startswith("import "):
-    #         start = peek
-    # import time
-    # starttime = time.time()
-    start = 0
+    start, peek = linenumber, linenumber
+    while peek >= 0:
+        if buffer[peek] == "" or buffer[peek].strip() == "":
+            peek -= 1
+            continue
+        elif buffer[peek].strip().startswith("def "):
+            start = peek
+        elif buffer[peek].strip().startswith("class "):
+            start = peek
+        elif buffer[peek].strip().startswith("while "):
+            start = peek
+        elif buffer[peek].strip().startswith("from "):
+            start = peek
+        elif buffer[peek].strip().startswith("import "):
+            start = peek
+        else:
+            peek -= 1
+            continue
+        break
+    print(start, linenumber)
     conditionstake: List[Tuple[str, int]] = list()
     tempcs = None
     toplinenumber = linenumber

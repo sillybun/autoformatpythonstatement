@@ -84,6 +84,8 @@ if line.strip() == "":
     vim.current.window.cursor = (row + 1, len(line))
 else:
     vim.command("call s:FormatCurrentLine()")
+    line = vim.current.line
+    row, col = vim.current.window.cursor
 
     extra = line.strip()
 
