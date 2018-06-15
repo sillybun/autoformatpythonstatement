@@ -61,7 +61,11 @@ class AddBufferContent:
 
 
 def getcurrentindent(buffer, linenumber: int) -> Tuple[int, bool]:
-    start, peek = linenumber, linenumber
+    import afpython
+    lines = [buffer[row] for row in range(linenumber)]
+    return afpython.getpythonindent(lines)
+
+    start, peek = linenumber - 1, linenumber - 1
     while peek >= 0:
         if buffer[peek] == "" or buffer[peek].strip() == "":
             peek -= 1
@@ -80,7 +84,7 @@ def getcurrentindent(buffer, linenumber: int) -> Tuple[int, bool]:
             peek -= 1
             continue
         break
-    print(start, linenumber)
+    # print(start, linenumber)
     conditionstake: List[Tuple[str, int]] = list()
     tempcs = None
     toplinenumber = linenumber

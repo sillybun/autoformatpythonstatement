@@ -71,7 +71,7 @@ python3 << endOfPython
 
 import time
 import vim
-import vimbufferutil
+import ZYTFDUAUTOFORMATvimbufferutil
 
 line = vim.current.line
 row, col = vim.current.window.cursor
@@ -94,7 +94,7 @@ else:
         vim.current.buffer.append(line, row)
         vim.current.window.cursor = (row + 1, len(line))
     else:
-        indentlevel, finishflag = vimbufferutil.getcurrentindent(vim.current.buffer, row)
+        indentlevel, finishflag = ZYTFDUAUTOFORMATvimbufferutil.getcurrentindent(vim.current.buffer, row)
         if not finishflag:
             nextindentlevel = indentlevel + 2
         elif vim.current.line[-1] == ":":
@@ -162,8 +162,13 @@ function! s:ChangeFormatCurrentLineMode()
 		let g:autoformatpythonstate_mode = 0
 	else
 		echom "Change Mode: Enable"
-		inoremap <silent> <buffer> <expr> <Cr> (Strip(getline('.')) != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
-		nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
+        inoremap <silent> <expr> <buffer> <Cr> SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>'
+        "inoremap <silent> <buffer> <expr> <Esc> '<Esc>:AFExitInsertMode<Cr>'
+        nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
+        augroup afpsgroup
+            autocmd!
+            autocmd! InsertLeave *.py call s:ExitInsertMode()
+        augroup END
 		let g:autoformatpythonstate_mode = 1
 	endif
 endfunction
