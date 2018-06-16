@@ -1,8 +1,6 @@
-def f(a: int) -> str:
+def f(a:
+        int = 1
+        , b = 1):
     return 1
 
-
-b = f(1.0)
-
-
-
+print(f(1))

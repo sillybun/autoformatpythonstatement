@@ -94,9 +94,12 @@ else:
         vim.current.buffer.append(line, row)
         vim.current.window.cursor = (row + 1, len(line))
     else:
-        indentlevel, finishflag = ZYTFDUAUTOFORMATvimbufferutil.getcurrentindent(vim.current.buffer, row)
+        indentlevel, finishflag, unfinishedtype = ZYTFDUAUTOFORMATvimbufferutil.getcurrentindent(vim.current.buffer, row)
         if not finishflag:
-            nextindentlevel = indentlevel + 2
+            if unfinishedtype == 6:
+                nextindentlevel = indentlevel
+            else:
+                nextindentlevel = indentlevel + 2
         elif vim.current.line[-1] == ":":
             nextindentlevel = indentlevel + 1
         else:

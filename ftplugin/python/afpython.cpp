@@ -70,6 +70,7 @@ static PyObject * getpythonindent(PyObject * self, PyObject * args)
         return NULL;
     long totallinenumber = PyList_Size(object);
     int lasttype = -1, lastrow = -1;
+    int unfinishedtype = -1;
     int toplinenumber = totallinenumber;
     while (toplinenumber - 1 > 0)
     {
@@ -87,7 +88,18 @@ static PyObject * getpythonindent(PyObject * self, PyObject * args)
         if (row == totallinenumber - 1 && conditionstack.stacksize != 0)
         {
             lasttype = conditionstack.type[conditionstack.stacksize - 1];
-            lastrow = conditionstack.rownumber[conditionstack.stacksize - 1];
+            switch(conditionstack.toptype()) {
+                case TYPEHINT:
+                case TYPEALPHA:
+                case DICTVALUE:
+                case DEFAULTVALUE:
+                    lastrow = conditionstack.rownumber[conditionstack.stacksize - 2];
+                    break;
+                default:
+                    lastrow = conditionstack.rownumber[conditionstack.stacksize - 1];
+                    break;
+
+            }
         }
         PyObject* temp = PyList_GetItem(object, row);
         const char * line = PyUnicode_AsUTF8(temp);
@@ -183,6 +195,7 @@ NUMBERCASE:
                     break;
                 case '=':
                     conditionstack.push(DEFAULTVALUE, row);
+                    break;
 ALPHACASE:
 OPERATORCASE:
                 case '_':
@@ -240,6 +253,7 @@ NUMBERCASE:
                         flag = false;
                         conditionstack.clear();
                     }
+                    break;
 ALPHACASE:
 OPERATORCASE:
                 case '_':
@@ -297,6 +311,7 @@ NUMBERCASE:
                         flag = false;
                         conditionstack.clear();
                     }
+                    break;
                 case ':':
                     conditionstack.push(DICTVALUE, row);
                     break;
@@ -358,10 +373,6 @@ ALPHACASE:
                 case '_':
                 case '.':
 NUMBERCASE:
-                    if (col == lengthofline - 1)
-                    {
-                        conditionstack.pop();
-                    }
                     break;
                 case ',':
                 case ' ':
@@ -420,6 +431,7 @@ NUMBERCASE:
                         flag = false;
                         conditionstack.clear();
                     }
+                    break;
 ALPHACASE:
 OPERATORCASE:
                 case '_':
@@ -480,6 +492,7 @@ NUMBERCASE:
                         flag = false;
                         conditionstack.clear();
                     }
+                    break;
 ALPHACASE:
 OPERATORCASE:
                 case '_':
@@ -528,6 +541,18 @@ NUMBERCASE:
                 }
             }
         }
+        if(conditionstack.stacksize!=0)
+        {
+            switch(conditionstack.toptype()) {
+                case DOUBLEQUOTE:
+                case SINGLEQUOTE:
+                    conditionstack.clear();
+                    break;
+                case TYPEALPHA:
+                    conditionstack.pop();
+                    break;
+            }
+        }
     }
     int indentlevel = 0;
     if (lasttype == -1)
@@ -543,13 +568,17 @@ NUMBERCASE:
         const char * line = PyUnicode_AsUTF8(temp);
         const char * extra = lstrip(line);
         indentlevel = (extra - line) / 4;
+        unfinishedtype = lasttype;
     }
     int finishflag = 1;
     PyObject* temp = PyList_GetItem(object, totallinenumber-1);
     const char * line = PyUnicode_AsUTF8(temp);
+    if (conditionstack.stacksize !=0) {
+        unfinishedtype = conditionstack.toptype();
+    }
     if (conditionstack.stacksize != 0 || lastchar(line) == '\\')
         finishflag = 0;
-    return Py_BuildValue("(ii)", indentlevel, finishflag);
+    return Py_BuildValue("(iii)", indentlevel, finishflag, unfinishedtype);
 }
 
 
