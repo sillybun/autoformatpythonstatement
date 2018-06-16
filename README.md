@@ -4,6 +4,8 @@
 
 This is a plugin aimed to autoformat python statement. When you finish type a line and type \<Cr\> to start a new line, the previous line will be formatted automatically.
 
+It also boost the start new line time for large python file. No delay at all.
+
 ## Details
 
 if you write python file like that:
@@ -22,20 +24,17 @@ a = 1 + 2
 
 Use your plugin manager of choice.
 
-- [Pathogen](https://github.com/tpope/vim-pathogen)
-  - `git clone https://github.com/sillybun/autoformat-python ~/.vim/bundle/autoformat-python`
 - [Vundle](https://github.com/gmarik/vundle)
   - Add `Bundle 'https://github.com/sillybun/autoformat-python'` to .vimrc
   - Run `:BundleInstall`
-- [NeoBundle](https://github.com/Shougo/neobundle.vim)
-  - Add `NeoBundle 'https://github.com/sillybun/autoformat-python'` to .vimrc
-  - Run `:NeoBundleInstall`
+  - And change to the plugin directory and run in shell `./install.sh`
+
 - [vim-plug](https://github.com/junegunn/vim-plug)
-  - Add `Plug 'https://github.com/sillybun/autoformat-python'` to .vimrc
+  - Add `Plug 'https://github.com/sillybun/autoformat-python', {'do': './install.sh'}` to .vimrc
   - Run `:PlugInstall`
 
-## Setting
-
-put `autocmd FileType python let g:autoformatpython_enabled = 1` in your vimrc.
+## Usage
 
 Everytime you type enter, the previous line will be formatted automatically.
+
+`:ChangeFormatCurrentLineMode`: this command is to switch the plugin on/off state.
