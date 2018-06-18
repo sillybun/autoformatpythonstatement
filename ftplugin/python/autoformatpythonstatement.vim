@@ -142,7 +142,7 @@ endfunction
 if g:autoformatpython_enabled == 1
 	" inoremap <silent> <buffer> <expr> <Cr> (Strip(getline('.')) != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
 	" inoremap <silent> <expr> <buffer> <Cr> '<C-o>:FormatCurrentLineandIndent<Cr>'
-	inoremap <silent> <expr> <buffer> <Cr> (col(".") > col("$")) ? SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>' : '<Cr>'
+	inoremap <silent> <expr> <buffer> <Cr> (col(".") >= col("$")) ? SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>' : '<Cr>'
     "inoremap <silent> <buffer> <expr> <Esc> '<Esc>:AFExitInsertMode<Cr>'
 	nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
     augroup afpsgroup
@@ -165,7 +165,7 @@ function! s:ChangeFormatCurrentLineMode()
 		let g:autoformatpythonstate_mode = 0
 	else
 		echom "Change Mode: Enable"
-        inoremap <silent> <expr> <buffer> <Cr> (col(".") > col("$")) ? SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>' : '<Cr>'
+        inoremap <silent> <expr> <buffer> <Cr> (col(".") >= col("$")) ? SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>' : '<Cr>'
         "inoremap <silent> <buffer> <expr> <Esc> '<Esc>:AFExitInsertMode<Cr>'
         nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
         augroup afpsgroup
