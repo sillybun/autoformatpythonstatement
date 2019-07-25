@@ -25,12 +25,12 @@ a = 1 + 2
 Use your plugin manager of choice.
 
 - [Vundle](https://github.com/gmarik/vundle)
-  - Add `Bundle 'https://github.com/sillybun/autoformat-python'` to .vimrc
+  - Add `Bundle 'https://github.com/sillybun/autoformatpythonstatement'` to .vimrc
   - Run `:BundleInstall`
   - And change to the plugin directory and run in shell `./install.sh`
 
 - [vim-plug](https://github.com/junegunn/vim-plug)
-  - Add `Plug 'https://github.com/sillybun/autoformat-python', {'do': './install.sh'}` to .vimrc
+  - Add `Plug 'https://github.com/sillybun/autoformatpythonstatement', {'do': './install.sh'}` to .vimrc
   - Run `:PlugInstall`
 
 ## Usage

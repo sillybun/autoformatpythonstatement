@@ -23,45 +23,52 @@ line = vim.current.line
 row, col = vim.current.window.cursor
 space = ''
 if len(line) > 79:
-	toolong = True
+    toolong = True
 else:
-	toolong = False
+    toolong = False
 
     #for char in line:
-    #	if char == ' ' or char == '\t':
-    #		space = space + char
-    #	else:
-    #		break
+    #    if char == ' ' or char == '\t':
+    #        space = space + char
+    #    else:
+    #        break
 
 extra = line.lstrip()
 space = " " * (len(line) - len(extra))
 
 if extra == '':
-	pass
+    pass
 else:
-	oldextralen = len(extra)
-	if extra == "##" and (row > 1 and (re.match("^\s*def ", vim.current.buffer[row-2]) or re.match("^\s*class ", vim.current.buffer[row-2]))):
-		vim.current.line = space + '"""'
-		vim.current.buffer.append("", row)
-		vim.current.buffer[row] = space + '"""'
-		vim.current.window.cursor = (row, len(space) + 3)
-	elif extra != '':
-		flag = False
-		if toolong:
-			extra, flag = astformat.formatif(extra)
-		if not flag:
-			extra = autopep8.fix_code(extra)[:-1]
-		if '\n' in extra:
-			extras = extra.split('\n')
-			for i in range(len(extras)-1):
-				vim.current.buffer.append("", row)
-			for i, v in enumerate(extras):
-				vim.current.buffer[row + i - 1] = space + v
-			vim.current.window.cursor = (row + len(extras) - 1, len(space) + len(extras[-1]))
-		else:
-			expandlen = len(extra) - oldextralen
-			vim.current.line = space + extra
-			vim.current.window.cursor = (row, col + expandlen)
+    oldextralen = len(extra)
+    if extra == "##" and (row > 1 and (re.match("^\s*def ", vim.current.buffer[row-2]) or re.match("^\s*class ", vim.current.buffer[row-2]))):
+        vim.current.line = space + '"""'
+        vim.current.buffer.append("", row)
+        vim.current.buffer[row] = space + '"""'
+        vim.current.window.cursor = (row, len(space) + 3)
+    elif extra != '':
+        flag = False
+        if toolong:
+            try:
+                extra, flag = astformat.formatif(extra)
+            except:
+                pass
+        if not flag:
+            try:
+                extra = autopep8.fix_code(extra)[:-1]
+            except:
+                pass
+            else:
+                if '\n' in extra:
+                    extras = extra.split('\n')
+                    for i in range(len(extras)-1):
+                        vim.current.buffer.append("", row)
+                    for i, v in enumerate(extras):
+                        vim.current.buffer[row + i - 1] = space + v
+                    vim.current.window.cursor = (row + len(extras) - 1, len(space) + len(extras[-1]))
+                else:
+                    expandlen = len(extra) - oldextralen
+                    vim.current.line = space + extra
+                    vim.current.window.cursor = (row, col + expandlen)
 
 endOfPython
 endfunction
@@ -140,11 +147,11 @@ return ''
 endfunction
 
 if g:autoformatpython_enabled == 1
-	" inoremap <silent> <buffer> <expr> <Cr> (Strip(getline('.')) != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
-	" inoremap <silent> <expr> <buffer> <Cr> '<C-o>:FormatCurrentLineandIndent<Cr>'
-	inoremap <silent> <expr> <buffer> <Cr> (col(".") >= col("$")) ? SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>' : '<Cr>'
+    " inoremap <silent> <buffer> <expr> <Cr> (Strip(getline('.')) != '' && col(".") >= col("$")) ? '<Esc>:FormatCurrentLine<Cr>a<Cr>' : '<Cr>'
+    " inoremap <silent> <expr> <buffer> <Cr> '<C-o>:FormatCurrentLineandIndent<Cr>'
+    inoremap <silent> <expr> <buffer> <Cr> (col(".") >= col("$")) ? SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>' : '<Cr>'
     "inoremap <silent> <buffer> <expr> <Esc> '<Esc>:AFExitInsertMode<Cr>'
-	nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
+    nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
     augroup afpsgroup
         autocmd!
         autocmd! InsertLeave *.py call s:ExitInsertMode()
@@ -152,19 +159,19 @@ if g:autoformatpython_enabled == 1
 endif
 
 function! s:ChangeFormatCurrentLineMode()
-	if g:autoformatpythonstate_mode == 1
-		try
-			iunmap <buffer> <Cr>
-			nunmap <buffer> <Cr>
-		catch
-		endtry
+    if g:autoformatpythonstate_mode == 1
+        try
+            iunmap <buffer> <Cr>
+            nunmap <buffer> <Cr>
+        catch
+        endtry
         augroup afpsgroup
             autocmd!
         augroup END
-		echom "Change Mode: Disable"
-		let g:autoformatpythonstate_mode = 0
-	else
-		echom "Change Mode: Enable"
+        echom "Change Mode: Disable"
+        let g:autoformatpythonstate_mode = 0
+    else
+        echom "Change Mode: Enable"
         inoremap <silent> <expr> <buffer> <Cr> (col(".") >= col("$")) ? SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>' : '<Cr>'
         "inoremap <silent> <buffer> <expr> <Esc> '<Esc>:AFExitInsertMode<Cr>'
         nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
@@ -172,8 +179,8 @@ function! s:ChangeFormatCurrentLineMode()
             autocmd!
             autocmd! InsertLeave *.py call s:ExitInsertMode()
         augroup END
-		let g:autoformatpythonstate_mode = 1
-	endif
+        let g:autoformatpythonstate_mode = 1
+    endif
 endfunction
 
 let b:autoformat_lastlength = -1
