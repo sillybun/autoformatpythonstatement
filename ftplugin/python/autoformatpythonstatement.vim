@@ -1,6 +1,11 @@
 " --------------------------------
 " Add our plugin to the path
 " --------------------------------
+if !has('python3')
+    echoerr "This Plugin can only with python3 support"
+    finish
+endif
+
 python3 import sys
 python3 import vim
 python3 sys.path.append(vim.eval('expand("<sfile>:h")'))
@@ -26,12 +31,6 @@ if len(line) > 79:
     toolong = True
 else:
     toolong = False
-
-    #for char in line:
-    #    if char == ' ' or char == '\t':
-    #        space = space + char
-    #    else:
-    #        break
 
 extra = line.lstrip()
 space = " " * (len(line) - len(extra))
