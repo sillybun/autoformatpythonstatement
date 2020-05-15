@@ -38,3 +38,11 @@ Use your plugin manager of choice.
 Everytime you type enter, the previous line will be formatted automatically.
 
 `:ChangeFormatCurrentLineMode`: this command is to switch the plugin on/off state.
+
+## Configuration
+
+```
+let g:autoformatpython_break_long_lines = 0
+```
+
+If this value is set to 1, long lines will be broken into several shorter lines automatically.

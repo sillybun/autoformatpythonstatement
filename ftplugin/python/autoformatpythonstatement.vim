@@ -46,32 +46,37 @@ else:
         vim.current.window.cursor = (row, len(space) + 3)
     elif extra != '':
         flag = False
-        # if toolong:
-        #     try:
-        #         extra, flag = astformat.formatif(extra)
-        #     except:
-        #         pass
+        if toolong and vim.eval("g:autoformatpython_break_long_lines") == '1':
+            try:
+                extra, flag = astformat.formatif(extra)
+            except:
+                pass
         if not flag:
             try:
                 extra = autopep8.fix_code(extra)[:-1]
             except:
                 pass
             else:
-                if '\n' in extra:
-                    # extras = extra.split('\n')
-                    # for i in range(len(extras)-1):
-                    #     vim.current.buffer.append("", row)
-                    # for i, v in enumerate(extras):
-                    #     vim.current.buffer[row + i - 1] = space + v
-                    # vim.current.window.cursor = (row + len(extras) - 1, len(space) + len(extras[-1]))
-                    temp = extra.split("\n")
-                    temp = [x.rstrip("\\") for x in temp]
-                    extra = temp[0] + "".join([x.lstrip() for x in temp[1:]])
-                    # print(temp, extra)
-                # else:
-                expandlen = len(extra) - oldextralen
-                vim.current.line = space + extra
-                vim.current.window.cursor = (row, col + expandlen)
+                if vim.eval("g:autoformatpython_break_long_lines") == "1":
+                    if '\n' in extra:
+                        extras = extra.split('\n')
+                        for i in range(len(extras)-1):
+                            vim.current.buffer.append("", row)
+                        for i, v in enumerate(extras):
+                            vim.current.buffer[row + i - 1] = space + v
+                        vim.current.window.cursor = (row + len(extras) - 1, len(space) + len(extras[-1]))
+                    else:
+                        expandlen = len(extra) - oldextralen
+                        vim.current.line = space + extra
+                        vim.current.window.cursor = (row, col + expandlen)
+                else:
+                    if '\n' in extra:
+                        temp = extra.split("\n")
+                        temp = [x.rstrip("\\") for x in temp]
+                        extra = temp[0] + "".join([x.lstrip() for x in temp[1:]])
+                    expandlen = len(extra) - oldextralen
+                    vim.current.line = space + extra
+                    vim.current.window.cursor = (row, col + expandlen)
 
 endOfPython
 endfunction
