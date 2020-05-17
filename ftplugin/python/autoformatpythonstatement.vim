@@ -73,7 +73,13 @@ else:
                     if '\n' in extra:
                         temp = extra.split("\n")
                         temp = [x.rstrip("\\") for x in temp]
-                        extra = temp[0] + "".join([x.lstrip() for x in temp[1:]])
+                        extra = temp[0]
+                        for x in temp[1:]:
+                            x = x.lstrip()
+                            if extra[-1] in ["(", "[", "{"]:
+                                extra = extra + x
+                            else:
+                                extra = extra + " " + x
                     expandlen = len(extra) - oldextralen
                     vim.current.line = space + extra
                     vim.current.window.cursor = (row, col + expandlen)
