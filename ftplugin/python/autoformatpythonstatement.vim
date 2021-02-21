@@ -36,7 +36,8 @@ extra = line.lstrip()
 space = " " * (len(line) - len(extra))
 
 if extra == '':
-    pass
+    vim.current.line = ""
+    vim.current.window.cursor = (row, 1)
 else:
     oldextralen = len(extra)
     if extra == "##" and (row > 1 and (re.match("^\s*def ", vim.current.buffer[row-2]) or re.match("^\s*class ", vim.current.buffer[row-2]))):
@@ -54,8 +55,8 @@ else:
         if not flag:
             try:
                 extra = autopep8.fix_code(extra)[:-1]
-            except:
-                pass
+            except Exception as e:
+                print(e)
             else:
                 if vim.eval("g:autoformatpython_break_long_lines") == "1":
                     if '\n' in extra:
