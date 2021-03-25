@@ -33,6 +33,10 @@ Use your plugin manager of choice.
   - Add `Plug 'https://github.com/sillybun/autoformatpythonstatement', {'do': './install.sh'}` to .vimrc
   - Run `:PlugInstall`
 
+> Warning: for macos m1 users, if you use arm64 vim (chech it via `:version`), please make sure that you run `install.sh` using arm64 python (e.g. downloaded from arm homebrew)
+
+For m1 user, `install.sh` will call `/opt/homebrew/bin/python3.9 setup.py build` to build core library.
+
 ## Usage
 
 Everytime you type enter, the previous line will be formatted automatically.

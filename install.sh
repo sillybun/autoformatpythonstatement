@@ -12,7 +12,23 @@ fi
 cd ftplugin/python
 
 echo "Begin to compile C extension of Python3 ..."
-python3 setup.py build
+arch_name="$(uname -m)"
+
+if [ "${arch_name}" = "x86_64" ]; then
+    if [ "$(sysctl -in sysctl.proc_translated)" = "1" ]; then
+        echo "Running on Rosetta 2"
+        python3 setup.py build
+    else
+        echo "Running on native Intel"
+        python3 setup.py build
+    fi
+elif [ "${arch_name}" = "arm64" ]; then
+    echo "Running on ARM"
+    /opt/homebrew/bin/python3.9 setup.py build
+else
+    echo "Unknown architecture: ${arch_name}"
+fi
+
 if [ $? -eq 0 ]
 then
     cp build/lib*3.?/afpython*.so afpython.so
