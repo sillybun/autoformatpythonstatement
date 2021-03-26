@@ -189,7 +189,9 @@ function! s:ChangeFormatCurrentLineMode()
         let g:autoformatpythonstate_mode = 0
     else
         echom "Change Mode: Enable"
-        inoremap <silent> <expr> <buffer> <Cr> (col(".") >= col("$")) ? SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>' : '<Cr>'
+        if g:autoformatpython_insertmode == 1:
+            inoremap <silent> <expr> <buffer> <Cr> (col(".") >= col("$")) ? SaveCurrentLength() . '<C-o>:FormatCurrentLineandIndent<Cr>' : '<Cr>'
+        endif
         "inoremap <silent> <buffer> <expr> <Esc> '<Esc>:AFExitInsertMode<Cr>'
         nnoremap <silent> <buffer> <cr> :FormatCurrentLine<cr><cr>
         augroup afpsgroup
